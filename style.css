@@ -25,6 +25,14 @@
   gap: 10px;
 }
 
+#map {
+  position: absolute;
+  top: 50px;  /* hauteur topbar */
+  bottom: 0;
+  width: 100%;
+}
+
+
 .badge {
   font-size: 12px;
   padding: 6px 10px;
