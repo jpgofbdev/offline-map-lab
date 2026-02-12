@@ -11,6 +11,26 @@ async function isCached(url) {
   const match = await cache.match(url);
   return !!match;
 }
+
+async function resetOffline() {
+  const keys = await caches.keys();
+  for (const key of keys) {
+    await caches.delete(key);
+  }
+  alert("Caches supprimés. Rechargez la page.");
+  location.reload();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("reset-offline");
+  if (btn) {
+    btn.onclick = resetOffline;
+  }
+});
+
+
+
+
 async function downloadRegion(url, onProgress) {
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error("Téléchargement impossible: " + res.status);
