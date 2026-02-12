@@ -1,0 +1,16 @@
+{
+  "regions": [
+    {
+      "code": "CVL",
+      "label": "Centre-Val de Loire",
+      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/CVL.pmtiles",
+      "size_mb": 100
+    },
+    {
+      "code": "PACA",
+      "label": "Provence-Alpes-Côte d’Azur",
+      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/PACA.pmtiles",
+      "size_mb": 400
+    }
+  ]
+}
