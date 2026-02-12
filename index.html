@@ -19,33 +19,30 @@
 <body>
 <div id="map"></div>
 <div id="topbar">
-  <div class="topbar-left">
-    <!-- ton sélecteur de région / titre -->
-    <span id="app-title">Offline Map Lab</span>
-  </div>
+  <div>Offline Map Lab</div>
 
-  <div class="topbar-right">
+  <div id="topbar-right">
     <span id="net-badge" class="badge">…</span>
-    <button id="offline-btn" class="btn-offline" title="Gestion hors connexion">Offline</button>
+    <button id="offline-btn" class="btn">Offline</button>
   </div>
 </div>
 
-<!-- Drawer simple -->
-<div id="offline-drawer" class="drawer hidden" aria-hidden="true">
+<div id="offline-drawer" class="drawer hidden">
   <div class="drawer-card">
-    <div class="drawer-header">
-      <div>
-        <div class="drawer-title">Fond hors connexion</div>
-        <div id="drawer-subtitle" class="drawer-subtitle"></div>
-      </div>
-      <button id="drawer-close" class="drawer-close" aria-label="Fermer">✕</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <strong>Fond hors connexion</strong>
+      <button id="drawer-close" class="btn">Fermer</button>
     </div>
 
-    <div id="drawer-content" class="drawer-content">
-      <!-- contenu injecté -->
+    <div id="drawer-content"></div>
+
+    <div class="small-note">
+      Une fois téléchargé, le fond est toujours utilisé en local
+      (plus stable que le réseau).
     </div>
   </div>
 </div>
+
 
 <script>
     const params = new URLSearchParams(window.location.search);
