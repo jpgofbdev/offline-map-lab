@@ -82,3 +82,101 @@ Headers nécessaires :
 ---
 
 Projet volontairement minimaliste pour garantir la robustesse terrain.
+
+# Architecture -- Offline Map Lab
+
+## Vue générale
+
+                    ┌─────────────────────────────┐
+                    │        Android Chrome       │
+                    │        (Utilisateur)        │
+                    └──────────────┬──────────────┘
+                                   │
+                                   ▼
+                    ┌─────────────────────────────┐
+                    │        index.html           │
+                    │  (MapLibre + UI + Offline)  │
+                    └──────────────┬──────────────┘
+                                   │
+                    ┌──────────────┴──────────────┐
+                    │                             │
+                    ▼                             ▼
+          ┌─────────────────┐          ┌──────────────────┐
+          │ Service Worker  │          │   MapLibre GL    │
+          │ (sw.js)         │          │ + PMTiles lib    │
+          └──────┬──────────┘          └─────────┬────────┘
+                 │                                 │
+                 │                                 │
+                 ▼                                 ▼
+       ┌────────────────────┐           ┌─────────────────────┐
+       │ CacheStorage       │           │  https://tiles...   │
+       │ - App shell        │           │  VPS OVH (Caddy)    │
+       │ - PMTiles régions  │           │  Fichiers .pmtiles  │
+       └────────────────────┘           └─────────────────────┘
+
+------------------------------------------------------------------------
+
+## Flux en ligne
+
+1.  L'utilisateur ouvre `index.html`
+2.  MapLibre charge le fichier `.pmtiles`
+3.  Caddy sert les données avec support `Range (206)`
+4.  Si région téléchargée → Service Worker sert le fichier local
+
+------------------------------------------------------------------------
+
+## Flux hors-ligne (mode avion)
+
+1.  Service Worker sert `index.html` depuis le cache
+2.  Service Worker sert `maplibre-gl.js`, `pmtiles.js`, etc.
+3.  Service Worker intercepte les requêtes `.pmtiles`
+4.  Réponse locale via `Blob.slice()` (Range 206 simulé)
+
+Aucune requête réseau nécessaire.
+
+------------------------------------------------------------------------
+
+## Caches utilisés
+
+  Cache                Contenu            Rôle
+  -------------------- ------------------ ---------------------
+  oml-shell-v1         HTML + JS + CSS    Redémarrage offline
+  offline-map-lab-v1   Fichiers PMTiles   Fonds régionaux
+
+------------------------------------------------------------------------
+
+## Principe clé
+
+> Si une région est téléchargée, elle est toujours servie en local, même
+> si le réseau est disponible.
+
+------------------------------------------------------------------------
+
+## Hypothèses de conception
+
+-   Android Chrome uniquement
+-   Pas d'iOS
+-   Pas d'authentification
+-   Pas de mise à jour automatique des PMTiles
+-   Fichiers stables (1 an)
+
+------------------------------------------------------------------------
+
+## Test de robustesse
+
+1.  Télécharger une région
+2.  Mode avion
+3.  Fermer Chrome
+4.  Rouvrir l'URL
+5.  Zoom / pan
+
+La carte doit fonctionner sans réseau.
+
+------------------------------------------------------------------------
+
+## Points sensibles
+
+-   Service Worker (gestion Range 206)
+-   Headers Caddy (Accept-Ranges, CORS)
+-   Espace stockage mobile
+
