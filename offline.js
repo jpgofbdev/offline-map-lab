@@ -25,11 +25,23 @@ async function deleteRegion(url) {
 
 async function updateBadge(currentUrl) {
   const has = await isCached(currentUrl);
-  const online = navigator.onLine ? "🟢" : "🔴";
-  const offline = has ? "✅" : "⛔";
-  document.getElementById("net-badge").textContent =
-    `${online} ${offline}`;
+  const online = navigator.onLine;
+
+  const statusNet = online ? "En ligne" : "Hors-ligne";
+  const statusOffline = has ? "prêt" : "indisponible";
+
+  const btn = document.getElementById("net-badge");
+
+  btn.textContent = `${statusNet} · Hors-connexion : ${statusOffline}`;
+
+  btn.title = has
+    ? "Le fond de plan est disponible hors connexion.\nAppuyer pour gérer."
+    : "Le fond de plan n'est pas encore téléchargé.\nAppuyer pour gérer.";
+
+  btn.setAttribute("aria-label", btn.title);
 }
+
+
 
 async function renderDrawer(currentUrl) {
   const regions = await loadRegions();
