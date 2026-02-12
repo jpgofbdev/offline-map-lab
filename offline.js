@@ -11,12 +11,43 @@ async function isCached(url) {
   const match = await cache.match(url);
   return !!match;
 }
+async function downloadRegion(url, onProgress) {
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error("Téléchargement impossible: " + res.status);
 
-async function downloadRegion(url) {
+  const total = Number(res.headers.get("content-length")) || 0;
+
+  // Si pas de streaming possible, fallback (rare sur Chrome Android mais on gère)
+  if (!res.body || !window.ReadableStream) {
+    const blob = await res.blob();
+    const cache = await caches.open(CACHE_NAME);
+    await cache.put(url, new Response(blob, { headers: res.headers }));
+    if (onProgress) onProgress(blob.size, blob.size, true);
+    return;
+  }
+
+  const reader = res.body.getReader();
+  const chunks = [];
+  let received = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    received += value.byteLength;
+    if (onProgress) onProgress(received, total, false);
+  }
+
+  const blob = new Blob(chunks, {
+    type: res.headers.get("content-type") || "application/octet-stream"
+  });
+
   const cache = await caches.open(CACHE_NAME);
-  const response = await fetch(url);
-  await cache.put(url, response);
+  await cache.put(url, new Response(blob, { headers: res.headers }));
+
+  if (onProgress) onProgress(received, total, true);
 }
+
 
 async function deleteRegion(url) {
   const cache = await caches.open(CACHE_NAME);
