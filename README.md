@@ -1,30 +1,84 @@
-# offline-map-lab
-
 # Offline Map Lab
 
-Prototype expérimental de visualisation offline-first de données publiques
-basé sur MapLibre GL JS et PMTiles.
+Prototype de visualisation cartographique offline basé sur :
 
-## Objectif
+- MapLibre GL JS
+- PMTiles (par région)
+- Service Worker (cache shell + PMTiles Range 206)
+- Android Chrome uniquement
 
-Démontrer qu'un fond cartographique vectoriel régional peut être :
-
-- servi sans serveur applicatif
-- performant sur mobile
-- utilisable en conditions terrain
-- basé uniquement sur des données ouvertes
+---
 
 ## Architecture
 
-Frontend :
-- MapLibre GL JS
-- PMTiles protocol
+### Shell offline
+Le Service Worker met en cache :
 
-Backend (démo) :
-- Fichiers PMTiles servis via HTTP range requests
+- index.html
+- style.css
+- offline.js
+- regions.json
+- maplibre-gl.js
+- maplibre-gl.css
+- pmtiles.js
 
-## Statut
+Ces fichiers permettent à l’application de redémarrer en mode avion.
 
-Projet expérimental / démonstrateur technique.
+---
 
-Ce projet n'est pas un outil métier officiel.
+### PMTiles offline
+
+Chaque région correspond à un fichier `.pmtiles`.
+
+Lorsqu’une région est téléchargée :
+
+- Le fichier complet est stocké dans CacheStorage.
+- Les requêtes Range sont servies localement (206).
+- Le fond est utilisé en local même si le réseau est disponible.
+
+---
+
+## Tests obligatoires après modification
+
+1. Télécharger CVL
+2. Mode avion
+3. Fermer Chrome
+4. Rouvrir l’URL
+5. Zoom / pan
+
+Même test avec PACA.
+
+---
+
+## Réinitialisation
+
+Un bouton "Réinitialiser hors-ligne" permet :
+
+- suppression des caches
+- suppression des PMTiles
+- reset complet
+
+---
+
+## Caddy requis
+
+Headers nécessaires :
+
+- Access-Control-Allow-Origin: *
+- Access-Control-Allow-Headers: Range
+- Access-Control-Expose-Headers: Content-Range, Content-Length, Accept-Ranges
+- Accept-Ranges: bytes
+
+---
+
+## Périmètre volontairement limité
+
+- Android Chrome uniquement
+- Pas d’iOS
+- Pas d’API dynamique
+- Pas d’authentification
+- Pas de mise à jour automatique des PMTiles
+
+---
+
+Projet volontairement minimaliste pour garantir la robustesse terrain.
