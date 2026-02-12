@@ -90,11 +90,22 @@ async function renderDrawer(currentUrl) {
 
     const has = await isCached(r.pmtiles_url);
 
-    div.innerHTML = `
-      <strong>${r.label}</strong> (${r.size_mb} Mo)
-      <br/>
-      <button>${has ? "Supprimer" : "Télécharger"}</button>
-    `;
+div.innerHTML = `
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+    <div>
+      <div><strong>${r.label}</strong> (${r.size_mb} Mo)</div>
+      <div id="status-${r.code}" class="progress-text">${has ? "Déjà téléchargé" : "Non téléchargé"}</div>
+      <div id="progwrap-${r.code}" style="display:none;">
+        <div class="progress"><div id="prog-${r.code}"></div></div>
+        <div id="progtext-${r.code}" class="progress-text">0%</div>
+      </div>
+    </div>
+    <div>
+      <button id="btn-${r.code}" class="btn">${has ? "Supprimer" : "Télécharger"}</button>
+    </div>
+  </div>
+`;
+
 
     div.querySelector("button").onclick = async () => {
       if (has) {
