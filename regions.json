@@ -8,7 +8,7 @@
     },
     {
       "code": "PACA",
-      "label": "Provence-Alpes-Côte d’Azur",
+      "label": "PACA",
       "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/PACA.pmtiles",
       "size_mb": 400
     }
