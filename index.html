@@ -17,6 +17,34 @@
 </head>
 <body>
 <div id="map"></div>
+<div id="topbar">
+  <div class="topbar-left">
+    <!-- ton sélecteur de région / titre -->
+    <span id="app-title">Offline Map Lab</span>
+  </div>
+
+  <div class="topbar-right">
+    <span id="net-badge" class="badge">…</span>
+    <button id="offline-btn" class="btn-offline" title="Gestion hors connexion">Offline</button>
+  </div>
+</div>
+
+<!-- Drawer simple -->
+<div id="offline-drawer" class="drawer hidden" aria-hidden="true">
+  <div class="drawer-card">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-title">Fond hors connexion</div>
+        <div id="drawer-subtitle" class="drawer-subtitle"></div>
+      </div>
+      <button id="drawer-close" class="drawer-close" aria-label="Fermer">✕</button>
+    </div>
+
+    <div id="drawer-content" class="drawer-content">
+      <!-- contenu injecté -->
+    </div>
+  </div>
+</div>
 
 <script>
     const params = new URLSearchParams(window.location.search);
