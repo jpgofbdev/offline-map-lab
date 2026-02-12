@@ -266,4 +266,16 @@
 </script>
 
 </body>
+  <script>
+  (async () => {
+    if (!("serviceWorker" in navigator)) return;
+    try {
+      await navigator.serviceWorker.register("./sw.js", { scope: "./" });
+      console.log("[SW] registered");
+    } catch (e) {
+      console.warn("[SW] registration failed", e);
+    }
+  })();
+</script>
+
 </html>
