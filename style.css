@@ -18,6 +18,9 @@
   z-index: 1000;
   font-family: system-ui, -apple-system, sans-serif;
 }
+.badge-btn{
+  cursor: pointer;
+}
 
 #topbar-right {
   display: flex;
