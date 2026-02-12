@@ -107,15 +107,56 @@ div.innerHTML = `
 `;
 
 
-    div.querySelector("button").onclick = async () => {
-      if (has) {
-        await deleteRegion(r.pmtiles_url);
+const btn = div.querySelector(`#btn-${r.code}`);
+
+btn.onclick = async () => {
+  btn.disabled = true;
+
+  if (has) {
+    btn.textContent = "Suppression…";
+    await deleteRegion(r.pmtiles_url);
+    await renderDrawer(currentUrl);
+    await updateBadge(currentUrl);
+    return;
+  }
+
+  // Téléchargement avec progression
+  btn.textContent = "Téléchargement…";
+
+  const wrap = div.querySelector(`#progwrap-${r.code}`);
+  const bar = div.querySelector(`#prog-${r.code}`);
+  const txt = div.querySelector(`#progtext-${r.code}`);
+  const st = div.querySelector(`#status-${r.code}`);
+
+  wrap.style.display = "block";
+  st.textContent = "Téléchargement en cours…";
+
+  try {
+    await downloadRegion(r.pmtiles_url, (received, total, done) => {
+      const pct = total ? Math.floor((received / total) * 100) : null;
+      if (pct !== null) {
+        bar.style.width = pct + "%";
+        txt.textContent = `${pct}% (${(received/1024/1024).toFixed(1)} / ${(total/1024/1024).toFixed(1)} Mo)`;
       } else {
-        await downloadRegion(r.pmtiles_url);
+        // si Content-Length absent
+        txt.textContent = `${(received/1024/1024).toFixed(1)} Mo téléchargés`;
       }
-      renderDrawer(currentUrl);
-      updateBadge(currentUrl);
-    };
+      if (done) {
+        st.textContent = "Téléchargement terminé.";
+      }
+    });
+
+    await renderDrawer(currentUrl);
+    await updateBadge(currentUrl);
+
+  } catch (e) {
+    console.warn(e);
+    st.textContent = "Erreur de téléchargement (réessayer).";
+    btn.disabled = false;
+    btn.textContent = "Télécharger";
+  }
+};
+
 
     container.appendChild(div);
   }
