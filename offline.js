@@ -39,6 +39,11 @@ async function updateBadge(currentUrl) {
     : "Le fond de plan n'est pas encore téléchargé.\nAppuyer pour gérer.";
 
   btn.setAttribute("aria-label", btn.title);
+
+btn.style.backgroundColor = has ? "#e8f5e9" : "#fff3e0";
+btn.style.borderColor = has ? "#c8e6c9" : "#ffe0b2";
+
+  
 }
 
 
