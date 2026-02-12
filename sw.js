@@ -5,6 +5,8 @@
 */
 
 const CACHE_NAME = "offline-map-lab-pmtiles-v1";
+import { initOfflineTopbar } from "./ui-offline-topbar.js";
+initOfflineTopbar();
 
 // --- Installation / activation ---
 self.addEventListener("install", (event) => {
