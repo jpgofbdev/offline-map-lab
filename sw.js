@@ -1,5 +1,5 @@
 /* ============================================================
-   Offline Map Lab – Service Worker (Stable V3)
+   Offline Map Lab – Service Worker (Stable V4)
    ============================================================ */
 
 const SHELL_CACHE = "oml-shell-v4";
