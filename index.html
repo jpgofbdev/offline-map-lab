@@ -14,27 +14,22 @@
 
 <body>
 
-<!-- TOPBAR -->
 <div id="topbar">
   <div id="topbar-left">
     <span id="app-title">Offline Map Lab</span>
-
-    <select id="region-select" class="topbar-select" title="Choisir la région">
-      <!-- rempli par offline.js -->
-    </select>
+    <select id="region-select" class="topbar-select"></select>
   </div>
 
   <div id="topbar-right">
-    <button id="net-badge" class="badge" type="button" title="Gérer le hors connexion">
+    <button id="net-badge" class="badge">
       En ligne · Hors-connexion : …
     </button>
   </div>
 </div>
 
-<!-- LANDING si pas de ?pm= -->
 <div id="landing">
   <h2>Choisir une région</h2>
-  <p>Sélectionne une région pour afficher la carte. Tu peux aussi télécharger des régions pour un usage hors connexion.</p>
+  <p>Sélectionne une région pour afficher la carte.</p>
 
   <div class="landing-row">
     <select id="landing-select" class="btn" style="flex:1;"></select>
@@ -46,11 +41,9 @@
   </div>
 </div>
 
-<!-- MAP -->
 <div id="map"></div>
 
-<!-- DRAWER OFFLINE -->
-<div id="offline-drawer" class="drawer hidden" aria-hidden="true">
+<div id="offline-drawer" class="drawer hidden">
   <div class="drawer-card">
     <div class="drawer-header">
       <div>
@@ -64,28 +57,20 @@
 
     <hr style="margin:16px 0;">
 
-    <button id="reset-offline" class="btn btn-danger" type="button">
+    <button id="reset-offline" class="btn btn-danger">
       Réinitialiser hors-ligne
     </button>
-
-    <div class="small-note" style="margin-top:10px;">
-      Astuce : une région téléchargée est servie en local même si le réseau est disponible.
-    </div>
   </div>
 </div>
 
 <script src="./offline.js"></script>
 
-<!-- INIT MAP (uniquement si ?pm= présent) -->
 <script>
-(function initMapIfPmPresent(){
+(function initMap(){
   const params = new URLSearchParams(location.search);
   const pm = params.get("pm");
-
-  // Pas de paramètre → pas de map (landing visible)
   if (!pm) return;
 
-  // Afficher la map
   document.getElementById("landing").style.display = "none";
   document.getElementById("map").style.display = "block";
 
@@ -96,17 +81,14 @@
   const protocol = new pmtiles.Protocol();
   maplibregl.addProtocol("pmtiles", protocol.tile);
 
-  // Charge ton style existant (style.json)
   fetch("./style.json")
     .then(r => r.json())
     .then(style => {
-      // On force la source basemap sur le PMTiles sélectionné
-      style.sources = style.sources || {};
-      style.sources.basemap = { type: "vector", url: "pmtiles://" + pmtilesUrl };
+      style.sources.basemap.url = "pmtiles://" + pmtilesUrl;
 
       const map = new maplibregl.Map({
         container: "map",
-        style,
+        style: style,
         center: [2.2, 46.7],
         zoom: 9
       });
@@ -114,13 +96,12 @@
       map.addControl(new maplibregl.NavigationControl(), "top-right");
     })
     .catch(err => {
-      console.error("Erreur style.json:", err);
-      alert("Erreur: style.json introuvable ou invalide.");
+      console.error(err);
+      alert("Erreur chargement style.json");
     });
 })();
 </script>
 
-<!-- Register SW -->
 <script>
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js");
