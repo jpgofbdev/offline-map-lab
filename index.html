@@ -81,24 +81,22 @@
   const protocol = new pmtiles.Protocol();
   maplibregl.addProtocol("pmtiles", protocol.tile);
 
-  fetch("./style.json")
-    .then(r => r.json())
-    .then(style => {
-      style.sources.basemap.url = "pmtiles://" + pmtilesUrl;
+fetch("./style.json")
+  .then(r => r.json())
+  .then(style => {
 
-      const map = new maplibregl.Map({
-        container: "map",
-        style: style,
-        center: [2.2, 46.7],
-        zoom: 9
-      });
+    style.sources.basemap.url = "pmtiles://" + pmtilesUrl;
 
-      map.addControl(new maplibregl.NavigationControl(), "top-right");
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Erreur chargement style.json");
+    const map = new maplibregl.Map({
+      container: "map",
+      style: style,
+      center: [2.2, 46.7],
+      zoom: 9
     });
+
+    map.addControl(new maplibregl.NavigationControl(), "top-right");
+  });
+
 })();
 </script>
 
