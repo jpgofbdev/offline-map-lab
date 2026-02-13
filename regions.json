@@ -1,16 +1,17 @@
 {
   "regions": [
-    {
-      "code": "CVL",
-      "label": "Centre-Val de Loire",
-      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/CVL.pmtiles",
-      "size_mb": 100
-    },
-    {
-      "code": "PACA",
-      "label": "PACA",
-      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/PACA.pmtiles",
-      "size_mb": 400
-    }
+    { "code": "AURA", "label": "Auvergne-Rhône-Alpes", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/AURA.pmtiles", "size_mb": null },
+    { "code": "BFC",  "label": "Bourgogne-Franche-Comté", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/BFC.pmtiles", "size_mb": null },
+    { "code": "BRE",  "label": "Bretagne", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/BRE.pmtiles", "size_mb": null },
+    { "code": "CVL",  "label": "Centre-Val de Loire", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/CVL.pmtiles", "size_mb": 100 },
+    { "code": "COR",  "label": "Corse", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/COR.pmtiles", "size_mb": null },
+    { "code": "GES",  "label": "Grand Est", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/GES.pmtiles", "size_mb": null },
+    { "code": "HDF",  "label": "Hauts-de-France", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/HDF.pmtiles", "size_mb": null },
+    { "code": "IDF",  "label": "Île-de-France", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/IDF.pmtiles", "size_mb": null },
+    { "code": "NOR",  "label": "Normandie", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/NOR.pmtiles", "size_mb": null },
+    { "code": "NAQ",  "label": "Nouvelle-Aquitaine", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/NAQ.pmtiles", "size_mb": null },
+    { "code": "OCC",  "label": "Occitanie", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/OCC.pmtiles", "size_mb": null },
+    { "code": "PACA", "label": "Provence-Alpes-Côte d’Azur", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/PACA.pmtiles", "size_mb": 296 },
+    { "code": "PDL",  "label": "Pays de la Loire", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/PDL.pmtiles", "size_mb": null }
   ]
 }
