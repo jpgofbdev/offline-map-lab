@@ -61,10 +61,14 @@
   const params = new URLSearchParams(window.location.search);
   const pm = params.get("pm");
 
-  if (!pm) {
-    alert("Ajouter ?pm=CVL.pmtiles");
-    throw new Error("Missing ?pm parameter");
-  }
+if (!pm) {
+  // Pas de paramètre ?pm → on affiche l’écran de choix
+  document.getElementById("map").style.display = "none";
+  document.getElementById("landing").style.display = "block";
+  return; // on n'initialise pas la carte
+}
+
+  
 
   const pmtilesUrl = pm.includes("://")
     ? pm
