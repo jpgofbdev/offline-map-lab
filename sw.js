@@ -33,9 +33,25 @@ self.addEventListener("install", event => {
 
 self.addEventListener("activate", event => {
   event.waitUntil((async () => {
+
+    const keys = await caches.keys();
+
+    await Promise.all(
+      keys.map(key => {
+        if (
+          key !== SHELL_CACHE &&
+          key !== PMTILES_CACHE
+        ) {
+          console.log("Suppression ancien cache:", key);
+          return caches.delete(key);
+        }
+      })
+    );
+
     await self.clients.claim();
   })());
 });
+
 
 /* ================= FETCH ================= */
 
