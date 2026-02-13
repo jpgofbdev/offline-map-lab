@@ -2,7 +2,7 @@
    Offline Map Lab – Service Worker (Stable V3)
    ============================================================ */
 
-const SHELL_CACHE = "oml-shell-v3";
+const SHELL_CACHE = "oml-shell-v4";
 const PMTILES_CACHE = "offline-map-lab-v1";
 
 const BASE = self.location.pathname.replace(/sw\.js$/, "");
