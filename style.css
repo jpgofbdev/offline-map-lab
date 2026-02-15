@@ -178,3 +178,33 @@ body {
   font-size: 12px;
   color: #555;
 }
+
+/* Bouton GPS flottant (terrain) */
+.fab-gps {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.15);
+  background: white;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  font-size: 22px;
+  line-height: 58px;
+  text-align: center;
+  z-index: 1000;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fab-gps[data-state="searching"] { opacity: 0.75; }
+.fab-gps[data-state="on"] { outline: 3px solid rgba(43,123,191,0.35); }
+.fab-gps[data-state="error"] { outline: 3px solid rgba(220,0,0,0.25); }
+
+/* On cache le bouton GeolocateControl natif, on garde la mécanique interne */
+.maplibregl-ctrl-geolocate {
+  display: none !important;
+}
+
