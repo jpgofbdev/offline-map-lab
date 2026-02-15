@@ -208,3 +208,8 @@ body {
   display: none !important;
 }
 
+.fab-gps:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
