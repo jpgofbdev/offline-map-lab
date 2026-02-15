@@ -38,6 +38,14 @@ export function loadSavedView(regionCode) {
 }
 
 export function initGPS(map, opts = {}) {
+    if (!("geolocation" in navigator)) {
+  btn.disabled = true;
+  btn.dataset.state = "error";
+  btn.title = "GPS indisponible (géolocalisation bloquée sur cet appareil/navigateur)";
+  btn.setAttribute("aria-label", btn.title);
+  return null;
+}
+
   const {
     buttonId = "gps-btn",
     enableHighAccuracy = true,
