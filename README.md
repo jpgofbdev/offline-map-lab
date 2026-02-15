@@ -11,7 +11,7 @@ Prototype de visualisation cartographique offline basé sur :
 
 ## Architecture
 
-### Shell offline sw
+### Shell offline sw 
 Le Service Worker met en cache :
 
 - index.html
