@@ -2,7 +2,7 @@
    Offline Map Lab – Service Worker (Stable V4)
    ============================================================ */
 
-const SHELL_CACHE = "oml-shell-v4";
+const SHELL_CACHE = "oml-shell-v6";
 const PMTILES_CACHE = "offline-map-lab-v1";
 
 const BASE = self.location.pathname.replace(/sw\.js$/, "");
@@ -16,7 +16,9 @@ const SHELL_ASSETS = [
   BASE + "style.json",
   BASE + "maplibre-gl.js",
   BASE + "maplibre-gl.css",
-  BASE + "pmtiles.js"
+  BASE + "pmtiles.js",
+  BASE + "search-online.js",
+
 ];
 
 /* ================= INSTALL ================= */

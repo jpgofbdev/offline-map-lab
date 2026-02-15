@@ -67,6 +67,7 @@
 
 <script type="module">
 import { initGPS, initViewPersistence, loadSavedView, GPSHelpers } from "./gps.js";
+import { initOnlineCommuneSearch } from "./search-online.js";
 
 (function initMap(){
   const params = new URLSearchParams(location.search);
@@ -105,6 +106,9 @@ import { initGPS, initViewPersistence, loadSavedView, GPSHelpers } from "./gps.j
 
       // ✅ GPS (bouton flottant)
       initGPS(map, { buttonId: "gps-btn" });
+
+      initOnlineCommuneSearch(map);
+
     })
     .catch(err => {
       console.error(err);
@@ -143,9 +147,27 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 
+<button id="search-open" class="btn-search" title="Rechercher une commune" aria-label="Rechercher une commune">🔍</button>
+
+
 <button id="gps-btn" class="fab-gps" title="GPS : centrer sur ma position" aria-label="GPS : centrer sur ma position">
   ⦿
 </button>
+
+<div id="search-drawer" class="drawer hidden">
+  <div class="drawer-panel">
+    <div class="drawer-header">
+      <div class="drawer-title">Recherche commune (en ligne)</div>
+      <button id="search-close" class="drawer-close" title="Fermer" aria-label="Fermer">✕</button>
+    </div>
+
+    <div class="drawer-body">
+      <input id="search-input" class="search-input" type="text" placeholder="Commune (ex: Orléans)" autocomplete="off" />
+      <div id="search-status" class="search-status"></div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+</div>
 
 
 </body>
