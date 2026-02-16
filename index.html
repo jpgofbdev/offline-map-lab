@@ -87,16 +87,30 @@ import { initOnlineCommuneSearch } from "./search-online.js";
   const protocol = new pmtiles.Protocol();
   maplibregl.addProtocol("pmtiles", protocol.tile);
 
-  fetch("./style.json?v=2026-02-16-1")///pour changer le style
-    .then(r => r.json())
-    .then(style => {
+  Promise.all([
+    fetch("./style.json?v=2026-02-16-1", { cache: "no-store" }).then(r => r.json()),
+    fetch("./regions.json?v=2026-02-16-1", { cache: "no-store" }).then(r => r.json())
+  ])
+    .then(([style, reg]) => {
       style.sources.basemap.url = "pmtiles://" + pmtilesUrl;
+
+      const regions = reg?.regions || [];
+      const r = regions.find(x => x.code === regionCode);
+      const regionCenter = r?.center;         // [lng, lat]
+      const regionZoom = r?.zoom ?? 7;
+
+      // Priorités:
+      // 1) vue sauvegardée (par région)
+      // 2) centre/zoom par région (regions.json)
+      // 3) fallback France
+      const initialCenter = saved ? [saved.lng, saved.lat] : (regionCenter || [2.2, 46.7]);
+      const initialZoom   = saved ? saved.zoom : (regionCenter ? regionZoom : 6);
 
       const map = new maplibregl.Map({
         container: "map",
         style,
-        center: saved ? [saved.lng, saved.lat] : [2.2, 46.7],
-        zoom: saved ? saved.zoom : 9
+        center: initialCenter,
+        zoom: initialZoom
       });
 
       map.addControl(new maplibregl.NavigationControl(), "top-right");
@@ -107,37 +121,32 @@ import { initOnlineCommuneSearch } from "./search-online.js";
       // ✅ GPS (bouton flottant)
       initGPS(map, { buttonId: "gps-btn" });
 
+      // ✅ Recherche commune (en ligne)
       initOnlineCommuneSearch(map);
-
     })
     .catch(err => {
       console.error(err);
-      alert("Erreur chargement style.json");
+      alert("Erreur chargement style.json / regions.json");
     });
 })();
 </script>
-
 
 <script>
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js");
 }
 </script>
+
 <script>
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js").then(reg => {
-
     // Force check update à chaque chargement
     reg.update();
 
     reg.onupdatefound = () => {
       const newWorker = reg.installing;
-
       newWorker.onstatechange = () => {
-        if (
-          newWorker.state === "installed" &&
-          navigator.serviceWorker.controller
-        ) {
+        if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
           console.log("Nouvelle version détectée, rechargement...");
           window.location.reload();
         }
@@ -148,7 +157,6 @@ if ("serviceWorker" in navigator) {
 </script>
 
 <button id="search-open" class="btn-search" title="Rechercher une commune" aria-label="Rechercher une commune">🔍</button>
-
 
 <button id="gps-btn" class="fab-gps" title="GPS : centrer sur ma position" aria-label="GPS : centrer sur ma position">
   ⦿
@@ -168,7 +176,6 @@ if ("serviceWorker" in navigator) {
     </div>
   </div>
 </div>
-
 
 </body>
 </html>

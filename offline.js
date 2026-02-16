@@ -319,6 +319,7 @@ async function resetOffline(){
 
 async function initUI(){
   const regions = await loadRegions();
+  window.OML_REGIONS = regions; // exposé pour debug/usage éventuel
   await renderRegionSelectors(regions);
   await updateBadge();
 
