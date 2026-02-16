@@ -113,7 +113,10 @@ import { initOnlineCommuneSearch } from "./search-online.js";
         zoom: initialZoom
       });
 
-      map.addControl(new maplibregl.NavigationControl(), "top-right");
+const isMobile = matchMedia("(max-width: 520px)").matches;
+if (!isMobile) {
+  map.addControl(new maplibregl.NavigationControl(), "top-right");
+}
 
       // ✅ Sauvegarde/restauration de vue par région
       initViewPersistence(map, regionCode);
