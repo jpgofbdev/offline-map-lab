@@ -87,7 +87,7 @@ import { initOnlineCommuneSearch } from "./search-online.js";
   const protocol = new pmtiles.Protocol();
   maplibregl.addProtocol("pmtiles", protocol.tile);
 
-  fetch("./style.json")
+  fetch("./style.json?v=2026-02-16-1")///pour changer le style
     .then(r => r.json())
     .then(style => {
       style.sources.basemap.url = "pmtiles://" + pmtilesUrl;
