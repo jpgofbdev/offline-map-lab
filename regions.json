@@ -1,17 +1,95 @@
 {
   "regions": [
-    { "code": "AURA", "label": "Auvergne-Rhône-Alpes", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/AURA.pmtiles", "size_mb": null },
-    { "code": "BFC",  "label": "Bourgogne-Franche-Comté", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/BFC.pmtiles", "size_mb": null },
-    { "code": "BRE",  "label": "Bretagne", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/BRE.pmtiles", "size_mb": null },
-    { "code": "CVL",  "label": "Centre-Val de Loire", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/CVL.pmtiles", "size_mb": 100 },
-    { "code": "COR",  "label": "Corse", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/COR.pmtiles", "size_mb": null },
-    { "code": "GES",  "label": "Grand Est", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/GES.pmtiles", "size_mb": null },
-    { "code": "HDF",  "label": "Hauts-de-France", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/HDF.pmtiles", "size_mb": null },
-    { "code": "IDF",  "label": "Île-de-France", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/IDF.pmtiles", "size_mb": null },
-    { "code": "NOR",  "label": "Normandie", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/NOR.pmtiles", "size_mb": null },
-    { "code": "NAQ",  "label": "Nouvelle-Aquitaine", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/NAQ.pmtiles", "size_mb": null },
-    { "code": "OCC",  "label": "Occitanie", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/OCC.pmtiles", "size_mb": null },
-    { "code": "PACA", "label": "Provence-Alpes-Côte d’Azur", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/PACA.pmtiles", "size_mb": 296 },
-    { "code": "PDL",  "label": "Pays de la Loire", "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/PDL.pmtiles", "size_mb": null }
+    {
+      "code": "AURA",
+      "label": "Auvergne-Rhône-Alpes",
+      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/AURA.pmtiles",
+      "center": [4.5, 45.5],
+      "zoom": 7
+    },
+    {
+      "code": "BFC",
+      "label": "Bourgogne-Franche-Comté",
+      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/BFC.pmtiles",
+      "center": [5.0, 47.3],
+      "zoom": 7
+    },
+    {
+      "code": "BRE",
+      "label": "Bretagne",
+      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/BRE.pmtiles",
+      "center": [-2.8, 48.2],
+      "zoom": 7
+    },
+    {
+      "code": "CVL",
+      "label": "Centre-Val de Loire",
+      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/CVL.pmtiles",
+      "center": [1.6, 47.6],
+      "zoom": 7
+    },
+    {
+      "code": "COR",
+      "label": "Corse",
+      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/COR.pmtiles",
+      "center": [9.1, 42.2],
+      "zoom": 8
+    },
+    {
+      "code": "GES",
+      "label": "Grand Est",
+      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/GES.pmtiles",
+      "center": [6.2, 48.7],
+      "zoom": 7
+    },
+    {
+      "code": "HDF",
+      "label": "Hauts-de-France",
+      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/HDF.pmtiles",
+      "center": [2.8, 50.0],
+      "zoom": 7
+    },
+    {
+      "code": "IDF",
+      "label": "Île-de-France",
+      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/IDF.pmtiles",
+      "center": [2.5, 48.7],
+      "zoom": 8
+    },
+    {
+      "code": "NOR",
+      "label": "Normandie",
+      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/NOR.pmtiles",
+      "center": [0.3, 49.1],
+      "zoom": 7
+    },
+    {
+      "code": "NAQ",
+      "label": "Nouvelle-Aquitaine",
+      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/NAQ.pmtiles",
+      "center": [-0.6, 45.2],
+      "zoom": 6
+    },
+    {
+      "code": "OCC",
+      "label": "Occitanie",
+      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/OCC.pmtiles",
+      "center": [2.7, 43.9],
+      "zoom": 7
+    },
+    {
+      "code": "PACA",
+      "label": "Provence-Alpes-Côte d'Azur",
+      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/PACA.pmtiles",
+      "center": [6.3, 44.0],
+      "zoom": 7
+    },
+    {
+      "code": "PDL",
+      "label": "Pays de la Loire",
+      "pmtiles_url": "https://tiles.jpg-cvl-dev.fr/tiles/PDL.pmtiles",
+      "center": [-0.9, 47.6],
+      "zoom": 7
+    }
   ]
 }
