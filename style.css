@@ -367,3 +367,45 @@ body {
   }
 }
 
+/* === FIX MOBILE : le badge ne doit jamais flotter au-dessus du contenu === */
+@media (max-width: 520px){
+
+  /* la topbar reste au-dessus, mais dans le flux */
+  #topbar{
+    position: sticky;  /* ok si tu veux qu'elle reste visible */
+    top: 0;
+    z-index: 1000;
+    background: #fff;
+  }
+
+  /* IMPORTANT : annule tout absolute/fixed éventuel sur le badge */
+  #net-badge{
+    position: static !important;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 8px;
+  }
+
+  /* évite que le contenu passe sous la topbar si sticky */
+  body{
+    padding-top: 0;
+  }
+
+  /* si ton landing a un margin-top bizarre, on le neutralise */
+  #landing{
+    margin-top: 0;
+  }
+}
+
+
+@media (max-width: 520px){
+  #net-badge{
+    font-size: 14px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    text-align: center;
+  }
+}
+
+
