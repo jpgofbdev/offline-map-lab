@@ -117,12 +117,17 @@ async function updateBadge(){
 
   const btn = document.getElementById("net-badge");
   btn.textContent = `${online} · Hors-connexion : ${offlineText}`;
-  btn.title = "Appuyer pour gérer les régions hors connexion";
-  btn.setAttribute("aria-label", btn.title);
 
-  const hasAny = okCodes.length > 0;
-  btn.style.backgroundColor = hasAny ? "#e8f5e9" : "#fff3e0";
-  btn.style.borderColor = hasAny ? "#c8e6c9" : "#ffe0b2";
+  // Si le badge est désactivé (ex: fonds en ligne), on garde son title/opacity
+  // gérés ailleurs, mais on continue d'actualiser le texte d'état.
+  if (!btn.disabled) {
+    btn.title = "Appuyer pour gérer les régions hors connexion";
+    btn.setAttribute("aria-label", btn.title);
+
+    const hasAny = okCodes.length > 0;
+    btn.style.backgroundColor = hasAny ? "#e8f5e9" : "#fff3e0";
+    btn.style.borderColor = hasAny ? "#c8e6c9" : "#ffe0b2";
+  }
 }
 
 async function renderRegionSelectors(regions){

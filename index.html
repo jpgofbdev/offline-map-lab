@@ -17,6 +17,7 @@
 <div id="topbar">
   <div id="topbar-left">
     <span id="app-title">Offline Map Lab</span>
+    <select id="basemap-select" class="topbar-select" title="Fond de plan"></select>
     <select id="region-select" class="topbar-select"></select>
   </div>
 
@@ -111,6 +112,141 @@ import { initOnlineCommuneSearch } from "./search-online.js";
         style,
         center: initialCenter,
         zoom: initialZoom
+      });
+
+      // ------------------------------
+      // Basemaps
+      // - PMTiles régional (offline-first)
+      // - PMTiles régional (online)   (même source pour l'instant, mais dissocié en UI)
+      // - IGN Plan (raster)
+      // - IGN Ortho (raster)
+      // ------------------------------
+
+      const basemapSelect = document.getElementById("basemap-select");
+      if (basemapSelect && basemapSelect.options.length === 0) {
+        const opts = [
+          { id: "pmtiles-offline", label: "🟦 PMTiles régional (offline)" },
+          { id: "pmtiles-online", label: "🌐 PMTiles régional (online)" },
+          { id: "ign-plan-r", label: "🌐 IGN Plan (raster)" },
+          { id: "ign-ortho", label: "🌐 IGN Ortho (raster)" }
+        ];
+        for (const o of opts) {
+          const opt = document.createElement("option");
+          opt.value = o.id;
+          opt.textContent = o.label;
+          basemapSelect.appendChild(opt);
+        }
+        basemapSelect.value = "pmtiles-offline";
+      }
+
+      function setPmtilesBasemapVisible(visible) {
+        const st = map.getStyle();
+        if (!st?.layers) return;
+        for (const lyr of st.layers) {
+          if (lyr.source === "basemap") {
+            try { map.setLayoutProperty(lyr.id, "visibility", visible ? "visible" : "none"); }
+            catch { /* ignore */ }
+          }
+        }
+      }
+
+      function ensureIgnRasterLayers() {
+        const beforeId = map.getStyle()?.layers?.[0]?.id;
+
+        // Ortho (WMTS raster) – TileMatrixSet PM_0_19 (mise à jour IGN 2025)
+        if (!map.getSource("ign-ortho")) {
+          map.addSource("ign-ortho", {
+            type: "raster",
+            tiles: [
+              "https://data.geopf.fr/wmts?service=WMTS&request=GetTile&version=1.0.0" +
+              "&layer=ORTHOIMAGERY.ORTHOPHOTOS&style=normal&format=image/jpeg" +
+              "&tilematrixset=PM_0_19&tilematrix={z}&tilecol={x}&tilerow={y}"
+            ],
+            tileSize: 256,
+            maxzoom: 19
+          });
+        }
+        if (!map.getLayer("basemap-ign-ortho")) {
+          map.addLayer({
+            id: "basemap-ign-ortho",
+            type: "raster",
+            source: "ign-ortho",
+            layout: { visibility: "none" }
+          }, beforeId);
+        }
+
+        // Plan IGN (WMTS raster) – ressource "découverte" : GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2
+        if (!map.getSource("ign-plan-r")) {
+          map.addSource("ign-plan-r", {
+            type: "raster",
+            tiles: [
+              "https://data.geopf.fr/wmts?service=WMTS&request=GetTile&version=1.0.0" +
+              "&layer=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&style=normal&format=image/png" +
+              "&tilematrixset=PM&tilematrix={z}&tilecol={x}&tilerow={y}"
+            ],
+            tileSize: 256,
+            maxzoom: 19
+          });
+        }
+        if (!map.getLayer("basemap-ign-plan-r")) {
+          map.addLayer({
+            id: "basemap-ign-plan-r",
+            type: "raster",
+            source: "ign-plan-r",
+            layout: { visibility: "none" }
+          }, beforeId);
+        }
+      }
+
+      function setRasterBasemapVisibility(which) {
+        // which: "none" | "plan" | "ortho"
+        if (map.getLayer("basemap-ign-plan-r")) {
+          map.setLayoutProperty("basemap-ign-plan-r", "visibility", which === "plan" ? "visible" : "none");
+        }
+        if (map.getLayer("basemap-ign-ortho")) {
+          map.setLayoutProperty("basemap-ign-ortho", "visibility", which === "ortho" ? "visible" : "none");
+        }
+      }
+
+      function setBasemap(id) {
+        // Note: on dissocie offline/online en UI. Aujourd'hui c'est le même PMTiles,
+        // mais ça te laisse la place d'ajouter plus tard un PMTiles "online" distinct.
+        if (id === "pmtiles-offline" || id === "pmtiles-online") {
+          ensureIgnRasterLayers();
+          setRasterBasemapVisibility("none");
+          setPmtilesBasemapVisible(true);
+
+          // Drawer offline pertinent uniquement pour pmtiles-offline
+          const badge = document.getElementById("net-badge");
+          if (badge) {
+            const ok = (id === "pmtiles-offline");
+            badge.disabled = !ok;
+            badge.style.opacity = ok ? 1 : 0.6;
+            badge.title = ok
+              ? "Appuyer pour gérer les régions hors connexion"
+              : "Fond PMTiles en ligne : gestion hors connexion désactivée";
+          }
+          return;
+        }
+
+        if (id === "ign-plan-r" || id === "ign-ortho") {
+          ensureIgnRasterLayers();
+          setPmtilesBasemapVisible(false);
+          setRasterBasemapVisibility(id === "ign-plan-r" ? "plan" : "ortho");
+
+          const badge = document.getElementById("net-badge");
+          if (badge) {
+            badge.disabled = true;
+            badge.style.opacity = 0.6;
+            badge.title = "Fond en ligne (IGN) : hors connexion géré uniquement pour le fond PMTiles";
+          }
+        }
+      }
+
+      map.on("load", () => {
+        ensureIgnRasterLayers();
+        setBasemap(basemapSelect?.value || "pmtiles-offline");
+        basemapSelect?.addEventListener("change", () => setBasemap(basemapSelect.value));
       });
 
 const isMobile = matchMedia("(max-width: 520px)").matches;
