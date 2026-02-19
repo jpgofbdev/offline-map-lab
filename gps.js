@@ -38,14 +38,6 @@ export function loadSavedView(regionCode) {
 }
 
 export function initGPS(map, opts = {}) {
-    if (!("geolocation" in navigator)) {
-  btn.disabled = true;
-  btn.dataset.state = "error";
-  btn.title = "GPS indisponible (géolocalisation bloquée sur cet appareil/navigateur)";
-  btn.setAttribute("aria-label", btn.title);
-  return null;
-}
-
   const {
     buttonId = "gps-btn",
     enableHighAccuracy = true,
@@ -57,6 +49,20 @@ export function initGPS(map, opts = {}) {
   if (!btn) {
     console.warn(`[GPS] Bouton #${buttonId} introuvable`);
     return;
+  }
+
+  // Géolocalisation indisponible : généralement page non sécurisée (HTTP/file://)
+  // ou permission désactivée au niveau navigateur/appareil.
+  if (!("geolocation" in navigator)) {
+    const reason = window.isSecureContext
+      ? "géolocalisation non supportée / désactivée"
+      : "page non sécurisée (HTTPS requis pour le GPS)";
+    btn.disabled = true;
+    btn.dataset.state = "error";
+    btn.title = `GPS indisponible (${reason})`;
+    btn.setAttribute("aria-label", btn.title);
+    console.warn("[GPS] navigator.geolocation absent.", { isSecureContext: window.isSecureContext, href: location.href });
+    return null;
   }
 
   // On utilise GeolocateControl (robuste, maintenable)
@@ -98,7 +104,7 @@ export function initGPS(map, opts = {}) {
   geo.on("error", (err) => {
     // err.code/err.message
     setState("error", "GPS : erreur ou permission refusée");
-    console.warn("[GPS] error", err);
+    console.warn("[GPS] error", err, { isSecureContext: window.isSecureContext, href: location.href });
     // Revenir à un état neutre après un moment
     setTimeout(() => setState(tracking ? "on" : "off", tracking ? "GPS : suivi activé" : "GPS : centrer sur ma position"), 2500);
   });
