@@ -361,6 +361,7 @@ async function initUI(){
 
   // badge ouvre drawer
   document.getElementById("net-badge").onclick = async () => {
+    if (window.omlBasemapOnlineOnly) return;
     openDrawer();
     await renderDrawer(regions);
   };
@@ -384,3 +385,12 @@ window.addEventListener("DOMContentLoaded", () => {
     alert("Erreur initialisation UI offline. Voir console.");
   });
 });
+
+
+// Exposé pour basemaps.js
+window.omlUpdateBadge = async function(){
+  try {
+    const regions = await fetchRegions();
+    await updateBadge(regions);
+  } catch(e){}
+};

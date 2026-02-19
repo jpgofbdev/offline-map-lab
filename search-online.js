@@ -1,159 +1,93 @@
-// search-online.js — Recherche communes EN LIGNE (BAN) + zoom carte
-// Usage: import { initOnlineCommuneSearch } from "./search-online.js"; initOnlineCommuneSearch(map);
 
-export function initOnlineCommuneSearch(map, opts = {}) {
-  const {
-    openBtnId = "search-open",
-    drawerId = "search-drawer",
-    closeBtnId = "search-close",
-    inputId = "search-input",
-    resultsId = "search-results",
-    statusId = "search-status",
-    limit = 8,
-    debounceMs = 350
-  } = opts;
+// search-online.js (ES module) — Recherche en ligne de communes (geo.api.gouv.fr)
+// But : fournir une loupe stable et frugale. Hors connexion : la recherche affiche un message.
 
-  const openBtn = document.getElementById(openBtnId);
-  const drawer = document.getElementById(drawerId);
-  const closeBtn = document.getElementById(closeBtnId);
-  const input = document.getElementById(inputId);
-  const results = document.getElementById(resultsId);
-  const status = document.getElementById(statusId);
-
-  if (!openBtn || !drawer || !closeBtn || !input || !results || !status) {
-    console.warn("[search] éléments UI manquants");
-    return;
-  }
-
-  let t = null;
-  let abort = null;
-
-  function setOnlineState() {
-    const online = navigator.onLine;
-    input.disabled = !online;
-    input.placeholder = online ? "Commune (ex: Orléans)" : "Recherche disponible en ligne";
-    status.textContent = online ? "" : "Hors-ligne : la recherche nécessite Internet.";
-    if (!online) clearResults();
-  }
-
-  function clearResults() {
-    results.innerHTML = "";
-  }
-
-  function openDrawer() {
-    drawer.classList.remove("hidden");
-    setOnlineState();
-    if (!input.disabled) {
-      setTimeout(() => input.focus(), 50);
-    }
-  }
-
-  function closeDrawer() {
-    drawer.classList.add("hidden");
-    clearResults();
-    status.textContent = "";
-  }
-
-  openBtn.onclick = openDrawer;
-  closeBtn.onclick = closeDrawer;
-
-  // fermer en cliquant sur l'overlay
-  drawer.addEventListener("click", (e) => {
-    if (e.target === drawer) closeDrawer();
-  });
-
-  window.addEventListener("online", setOnlineState);
-  window.addEventListener("offline", setOnlineState);
-
-  function normalize(q) {
-    return (q || "").trim();
-  }
-
-  async function fetchBAN(q) {
-    if (abort) abort.abort();
-    abort = new AbortController();
-
-    const url = new URL("https://api-adresse.data.gouv.fr/search/");
-    url.searchParams.set("q", q);
-    url.searchParams.set("type", "municipality");
-    url.searchParams.set("autocomplete", "1");
-    url.searchParams.set("limit", String(limit));
-
-    const res = await fetch(url.toString(), { signal: abort.signal });
-    if (!res.ok) throw new Error("BAN HTTP " + res.status);
-    return res.json();
-  }
-
-  function renderItems(features) {
-    clearResults();
-
-    if (!features || features.length === 0) {
-      results.innerHTML = `<div class="search-empty">Aucun résultat</div>`;
-      return;
-    }
-
-    for (const f of features) {
-      const p = f.properties || {};
-      const label = p.label || p.name || "Commune";
-      const postcode = p.postcode ? ` (${p.postcode})` : "";
-      const ctx = p.context ? ` — ${p.context}` : "";
-
-      const item = document.createElement("button");
-      item.type = "button";
-      item.className = "search-item";
-      item.innerHTML = `<div class="search-item-title">${escapeHtml(label)}${escapeHtml(postcode)}</div>
-                        <div class="search-item-sub">${escapeHtml(ctx)}</div>`;
-
-      item.onclick = () => {
-        // bbox si dispo : [minLon, minLat, maxLon, maxLat]
-        const bbox = f.bbox;
-        if (Array.isArray(bbox) && bbox.length === 4) {
-          map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], { padding: 40, duration: 700 });
-        } else if (f.geometry?.coordinates?.length === 2) {
-          const [lng, lat] = f.geometry.coordinates;
-          map.flyTo({ center: [lng, lat], zoom: Math.max(map.getZoom(), 12), duration: 700 });
-        }
-        closeDrawer();
-      };
-
-      results.appendChild(item);
-    }
-  }
-
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, (m) => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
-    }[m]));
-  }
-
-  input.addEventListener("input", () => {
-    setOnlineState();
-    const q = normalize(input.value);
-
-    if (t) clearTimeout(t);
-    if (!navigator.onLine) return;
-
-    if (q.length < 3) {
-      clearResults();
-      status.textContent = q.length === 0 ? "" : "Tape au moins 3 caractères…";
-      return;
-    }
-
-    status.textContent = "Recherche…";
-    t = setTimeout(async () => {
-      try {
-        const data = await fetchBAN(q);
-        status.textContent = "";
-        renderItems(data.features || []);
-      } catch (e) {
-        if (e?.name === "AbortError") return;
-        console.warn("[search] erreur", e);
-        status.textContent = "Erreur recherche (réseau ?)";
-        clearResults();
-      }
-    }, debounceMs);
-  });
-
-  // état initial
-  setOnlineState();
+async function queryCommunes(q){
+  const url = "https://geo.api.gouv.fr/communes?nom=" + encodeURIComponent(q) +
+              "&fields=nom,code,centre&boost=population&limit=10";
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return await res.json();
 }
+
+function ensureUI(){
+  if (!document.getElementById("search-btn")) {
+    const btn = document.createElement("button");
+    btn.id = "search-btn";
+    btn.className = "fab";
+    btn.title = "Rechercher une commune (en ligne)";
+    btn.textContent = "🔎";
+    document.body.appendChild(btn);
+  }
+  if (!document.getElementById("search-panel")) {
+    const panel = document.createElement("div");
+    panel.id = "search-panel";
+    panel.style.cssText = "position:fixed;left:12px;bottom:80px;right:12px;max-width:520px;background:#fff;padding:10px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18);display:none;z-index:9999;";
+    panel.innerHTML = `
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input id="search-input" type="text" placeholder="Commune…" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:10px;" />
+        <button id="search-go" style="padding:8px 10px;border:1px solid #ddd;border-radius:10px;background:#f7f7f7;">OK</button>
+        <button id="search-close" style="padding:8px 10px;border:1px solid #ddd;border-radius:10px;background:#f7f7f7;">✕</button>
+      </div>
+      <div id="search-results" style="margin-top:8px;max-height:240px;overflow:auto;font-size:14px;"></div>
+      <div id="search-hint" style="margin-top:6px;font-size:12px;color:#666;">Recherche en ligne (hors connexion : indisponible).</div>
+    `;
+    document.body.appendChild(panel);
+  }
+}
+
+export function initOnlineCommuneSearch(map){
+  ensureUI();
+
+  const btn = document.getElementById("search-btn");
+  const panel = document.getElementById("search-panel");
+  const input = document.getElementById("search-input");
+  const go = document.getElementById("search-go");
+  const close = document.getElementById("search-close");
+  const results = document.getElementById("search-results");
+  const hint = document.getElementById("search-hint");
+
+  const open = () => { panel.style.display="block"; input.focus(); };
+  const hide = () => { panel.style.display="none"; };
+
+  btn.onclick = open;
+  close.onclick = hide;
+
+  async function run(){
+    const q = (input.value||"").trim();
+    if (q.length < 2) return;
+    results.textContent = "Recherche…";
+    try{
+      if (!navigator.onLine){
+        results.textContent = "Hors connexion : recherche indisponible.";
+        return;
+      }
+      const items = await queryCommunes(q);
+      if (!items.length){ results.textContent = "Aucun résultat."; return; }
+      results.innerHTML = "";
+      for (const c of items){
+        const row = document.createElement("div");
+        row.style.cssText="padding:6px 4px;border-bottom:1px solid #eee;cursor:pointer;";
+        row.textContent = `${c.nom} (${c.code})`;
+        row.onclick = () => {
+          const center = c.centre?.coordinates;
+          if (center?.length === 2){
+            map.flyTo({ center, zoom: 13 });
+            hide();
+          }
+        };
+        results.appendChild(row);
+      }
+    } catch(e){
+      results.textContent = "Erreur de recherche (connexion ?).";
+      console.warn("[Search] error", e);
+    }
+  }
+
+  go.onclick = run;
+  input.onkeydown = (e)=>{ if (e.key==="Enter") run(); };
+  hint.textContent = "Recherche en ligne (geo.api.gouv.fr).";
+}
+
+// compat éventuelle
+window.initOnlineSearch = initOnlineCommuneSearch;

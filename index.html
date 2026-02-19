@@ -64,11 +64,12 @@
   </div>
 </div>
 
-<script src="./offline.js"></script>
+  <script src="./offline.js"></script>
 
 <script type="module">
 import { initGPS, initViewPersistence, loadSavedView, GPSHelpers } from "./gps.js";
 import { initOnlineCommuneSearch } from "./search-online.js";
+import { initBasemapMenu } from "./basemaps.js";
 
 (function initMap(){
   const params = new URLSearchParams(location.search);
@@ -262,6 +263,9 @@ if (!isMobile) {
 
       // ✅ Recherche commune (en ligne)
       initOnlineCommuneSearch(map);
+
+      // ✅ Menu fonds de plan (PMTiles offline/online + IGN raster)
+      initBasemapMenu(map);
     })
     .catch(err => {
       console.error(err);
